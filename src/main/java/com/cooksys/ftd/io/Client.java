@@ -1,6 +1,7 @@
 package com.cooksys.ftd.io;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -16,12 +17,23 @@ public class Client implements Runnable {
 	private String hostname;
 	private int port;
 	private String[] messages;
+	private CopyFile file;
+	private boolean isFile;
+	
+	public Client(String hostname, int port, CopyFile file) {
+		super();
+		this.hostname = hostname;
+		this.port = port;
+		this.file = file;
+		isFile = true;
+	}
 
 	public Client(String hostname, int port, String... messages) {
 		super();
 		this.hostname = hostname;
 		this.port = port;
 		this.messages = messages;
+		isFile = false;
 	}
 
 	@Override
@@ -31,10 +43,16 @@ public class Client implements Runnable {
 				PrintWriter writer = new PrintWriter(server.getOutputStream(), true);) {
 			
 			// send a bunch of messages and read the responses
-			for (String message : this.messages) {
-				log.info("Sending server message: {}", message);
-				writer.println(message);
-				log.info("Server responded with message: {}", reader.readLine());
+			if (isFile) {
+				log.info("Sending Server file:");
+				//CopyFile.main();
+				//log.info("..." + reader.readLine());
+			} else {
+				for (String message : this.messages) {
+					log.info("Sending server message: {}", message);
+					writer.println(message);
+					log.info("Server responded with message: {}", reader.readLine());
+				}
 			}
 			
 		} catch (IOException e) {
